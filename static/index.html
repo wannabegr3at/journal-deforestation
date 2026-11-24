@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -29,7 +29,7 @@
           Deforestation Driver Classification Tester
         </h1>
         <p class="text-sm text-slate-500 mt-1">
-          Pengujian model klasifikasi penyebab deforestasi di Indonesia menggunakan citra Landsat 8 RGB (332×332) dan atribut topografi.
+          Deforestation driver classification testing in Indonesia using Landsat 8 RGB imagery (332×332) and auxiliary topographic descriptors.
         </p>
       </div>
       <div id="modelBadge" class="self-start sm:self-center px-3.5 py-2 rounded-xl text-xs font-medium bg-sky-50 text-sky-700 border border-sky-200">
@@ -47,7 +47,7 @@
           <!-- Upload Citra Landsat 8 -->
           <div>
             <label class="block text-sm font-semibold text-slate-700 mb-2">
-              1. Citra Satelit Landsat 8 (RGB Composite)
+              1. Landsat 8 Satellite Imagery (RGB Composite)
             </label>
             <div id="dropZone" class="border-2 border-dashed border-blue-200 hover:border-blue-400 bg-blue-50/40 rounded-xl p-5 text-center cursor-pointer transition">
               <input type="file" id="imageInput" accept="image/*" class="hidden" required />
@@ -66,17 +66,17 @@
           <div>
             <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
               <label class="text-sm font-semibold text-slate-700">
-                2. Variabel Topografi (Mean & Std Dev)
+                2. Auxiliary Topographic Descriptors (Mean & Std Dev)
               </label>
               <div class="flex flex-wrap gap-1.5">
                 <button type="button" onclick="applyPreset('plantation')" class="px-2.5 py-1 text-xs font-medium bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 rounded-lg transition">
-                  Preset: Dataran Rendah
+                  Preset: Lowland
                 </button>
                 <button type="button" onclick="applyPreset('smallholder')" class="px-2.5 py-1 text-xs font-medium bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 rounded-lg transition">
-                  Preset: Lereng Sedang
+                  Preset: Moderate Slope
                 </button>
                 <button type="button" onclick="applyPreset('shrubland')" class="px-2.5 py-1 text-xs font-medium bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 rounded-lg transition">
-                  Preset: Perbukitan/Semak
+                  Preset: Hills/Shrubland
                 </button>
               </div>
             </div>
@@ -84,7 +84,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
               <!-- Slope (aux_0 & aux_1) -->
               <div class="p-3.5 rounded-xl bg-slate-50/80 border border-slate-200/80 space-y-2.5">
-                <span class="block text-xs font-semibold text-blue-800 uppercase tracking-wider">Slope (°)</span>
+                <span class="block text-xs font-semibold text-blue-800 uppercase tracking-wider">Auxiliary Descriptor 1</span>
                 <div>
                   <label class="text-[11px] text-slate-500">Mean</label>
                   <input type="number" step="any" id="slope_mean" value="44.4277" class="input-field" required />
@@ -97,7 +97,7 @@
 
               <!-- Altitude (aux_2 & aux_3) -->
               <div class="p-3.5 rounded-xl bg-slate-50/80 border border-slate-200/80 space-y-2.5">
-                <span class="block text-xs font-semibold text-blue-800 uppercase tracking-wider">Altitude (m)</span>
+                <span class="block text-xs font-semibold text-blue-800 uppercase tracking-wider">Auxiliary Descriptor 2</span>
                 <div>
                   <label class="text-[11px] text-slate-500">Mean</label>
                   <input type="number" step="any" id="altitude_mean" value="2107.9790" class="input-field" required />
@@ -110,7 +110,7 @@
 
               <!-- Aspect (aux_4 & aux_5) -->
               <div class="p-3.5 rounded-xl bg-slate-50/80 border border-slate-200/80 space-y-2.5">
-                <span class="block text-xs font-semibold text-blue-800 uppercase tracking-wider">Aspect (°)</span>
+                <span class="block text-xs font-semibold text-blue-800 uppercase tracking-wider">Auxiliary Descriptor 3</span>
                 <div>
                   <label class="text-[11px] text-slate-500">Mean</label>
                   <input type="number" step="any" id="aspect_mean" value="0.0" class="input-field" required />
@@ -124,7 +124,7 @@
           </div>
 
           <button type="submit" id="submitBtn" class="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm rounded-xl shadow-sm transition flex items-center justify-center gap-2">
-            <span>Jalankan Klasifikasi Model</span>
+            <span>Run Classification</span>
           </button>
         </form>
       </div>
@@ -132,7 +132,7 @@
       <!-- Kolom Kanan: Hasil Prediksi -->
       <div class="lg:col-span-5 card p-6 flex flex-col justify-between">
         <div>
-          <h2 class="text-sm font-semibold text-slate-700 mb-4">Hasil Analisis & Probabilitas Kelas</h2>
+          <h2 class="text-sm font-semibold text-slate-700 mb-4">Prediction Results & Class Probabilities</h2>
 
           <div id="emptyState" class="py-16 text-center border border-dashed border-slate-200 rounded-xl bg-slate-50/50">
             <p class="text-sm text-slate-500">Belum ada pengujian dijalankan.</p>
@@ -142,7 +142,7 @@
           <div id="resultContainer" class="hidden space-y-5">
             <!-- Prediksi Utama -->
             <div class="p-4 rounded-xl bg-gradient-to-br from-blue-50 to-sky-100/70 border border-blue-200">
-              <span class="text-xs font-medium text-blue-700">Prediksi Penyebab Deforestasi</span>
+              <span class="text-xs font-medium text-blue-700">Predicted Deforestation Driver</span>
               <div class="flex items-baseline justify-between mt-1">
                 <h3 id="predictedClass" class="text-xl font-bold text-slate-900">-</h3>
                 <span id="confidenceScore" class="text-sm font-bold text-blue-700 bg-white px-2.5 py-0.5 rounded-lg border border-blue-200">0%</span>
@@ -151,18 +151,18 @@
 
             <!-- Distribusi Probabilitas 4 Kelas -->
             <div>
-              <span class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Distribusi Probabilitas</span>
+              <span class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">PROBABILITY DISTRIBUTION</span>
               <div id="probList" class="space-y-3"></div>
             </div>
 
             <!-- Ringkasan Input -->
             <div class="pt-4 border-t border-slate-100 text-xs text-slate-500 space-y-1">
               <div class="flex justify-between">
-                <span>Dimensi Input:</span>
+                <span>Input Dimension:</span>
                 <span id="metaSize" class="font-medium text-slate-700">-</span>
               </div>
               <div class="flex justify-between">
-                <span>Slope / Altitude / Aspect:</span>
+                <span>Auxiliary Descriptors:</span>
                 <span id="metaTopo" class="font-medium text-slate-700">-</span>
               </div>
             </div>
@@ -184,7 +184,7 @@
       .then(data => {
         const badge = document.getElementById('modelBadge');
         if (data.checkpoint_loaded) {
-          badge.textContent = `Model Aktif: best_model.pt (${data.device.toUpperCase()})`;
+          badge.textContent = `Active Model: best_proposed_unfrozen_3topo.pt (${data.device.toUpperCase()})`;
           badge.className = "self-start sm:self-center px-3.5 py-2 rounded-xl text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200";
         } else {
           badge.textContent = "Mode Demo (Letakkan best_model.pt di folder checkpoints/)";
@@ -298,7 +298,7 @@
         alert("Gagal memproses prediksi. Pastikan server FastAPI berjalan.");
       } finally {
         btn.disabled = false;
-        btn.textContent = "Jalankan Klasifikasi Model";
+        btn.textContent = "Run Classification";
       }
     });
   </script>

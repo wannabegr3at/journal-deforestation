@@ -156,9 +156,9 @@ async def predict_driver(
         "input_summary": {
             "image_size": f"{pil_image.width}x{pil_image.height} -> 332x332 px",
             "topography": {
-                "slope": f"{slope_mean} ± {slope_std}°",
-                "altitude": f"{altitude_mean} ± {altitude_std} m",
-                "aspect": f"{aspect_mean} ± {aspect_std}°",
+                "slope": f"{slope_mean} ± {slope_std}",
+                "altitude": f"{altitude_mean} ± {altitude_std}",
+                "aspect": f"{aspect_mean} ± {aspect_std}",
             },
         },
     }

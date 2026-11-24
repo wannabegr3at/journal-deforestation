@@ -39,14 +39,14 @@ Evaluated on the held-out ForestNet test set (668 samples):
 | 2 | Image + 1 Topo | Yes (Frozen) | Slope | Focal ($\alpha=0.8$) | 69.76 | 62.47 | 58.57 | 56.71 |
 | 3 | Image + 2 Topo | Yes (Frozen) | Slope, Altitude | Focal ($\alpha=0.8$) | 70.21 | 61.85 | 58.55 | 57.60 |
 | 4 | Image + 3 Pure Topo | Yes (Frozen) | Slope, Alt, Aspect | Focal ($\alpha=0.8$) | 69.01 | 56.21 | 56.59 | 54.68 |
-| 5 | Baseline (Image + 3 Topo + Gain) | Yes (Frozen) | 3 Topo + Gain | Focal ($\alpha=0.8$) | 70.36 | 61.32 | 59.95 | 59.29 |
+| 5 | Baseline (Image + 3 Topo + Gain) | Yes (Frozen) | 3 Topo + Gain | Focal ($\alpha=0.8$) | 69.76 | 59.78 | 58.29 | 56.73 |
 | 6 | End-to-End (No SupCon) | No (Unfrozen) | Slope, Alt, Aspect | Focal ($\alpha=0.8$) | 75.15 | 72.52 | 69.37 | 69.99 |
 | 7 | Frozen + Balanced Focal | Yes (Frozen) | Slope, Alt, Aspect | Balanced Focal | 69.31 | 60.88 | 60.50 | 60.55 |
 | 8 | Unfrozen SuperCon | Yes (Unfrozen) | Slope, Alt, Aspect | Focal ($\alpha=0.8$) | 73.05 | 74.02 | 65.07 | 65.64 |
-| **9** | **Proposed Method** | **Yes (Unfrozen)** | **Slope, Alt, Aspect** | **Balanced Focal** | **77.40** | **74.78** | **71.23** | **72.47** |
+| **9** | **Proposed Method** | **Yes (Unfrozen)** | **Slope, Alt, Aspect** | **Balanced Focal** | **76.95** | **73.71** | **72.63** | **72.59** |
 
 ### Key Highlights
-- **+7.04%** improvement in Test Accuracy and **+13.18%** in Macro F1-Score compared to the 4-auxiliary frozen baseline.
+- **+7.19%** improvement in Test Accuracy and **+15.86%** in Macro F1-Score compared to the 4-auxiliary frozen baseline.
 - Minority class (**Grassland shrubland**) recall increased more than fivefold, from **9.09%** (7/77) to **50.65%** (39/77).
 
 ### Visualizations
