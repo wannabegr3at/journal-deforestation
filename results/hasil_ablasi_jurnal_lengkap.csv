@@ -1,0 +1,10 @@
+Skenario,Contrastive,Accuracy,Macro Precision,Macro Recall,Macro F1
+1. Citra Saja (Tanpa Topografi / 0 Aux),Ya,69.46,59.31,58.65,56.35
+2. Citra + 1 Topografi (Slope),Ya,69.76,62.47,58.57,56.71
+"3. Citra + 2 Topografi (Slope, Altitude)",Ya,70.21,61.85,58.55,57.6
+"4. Citra + 3 Topografi Murni (Slope, Alt, Aspect)",Ya,69.01,56.21,56.59,54.68
+5. Baseline Paper (3 Topografi + Gain / 4 Aux),Ya,70.36,61.32,59.95,59.29
+6. Tanpa Contrastive (3 Topografi Murni),Tidak,75.15,72.52,69.37,69.99
+7. Proposed: SuperCon + Balanced Focal (3 Topo),Ya,69.31,60.88,60.5,60.55
+8. Proposed: Unfrozen SuperCon + Focal (3 Topografi),Ya (Unfrozen),73.05,74.02,65.07,65.64
+9. Proposed: Unfrozen SuperCon + Balanced Focal (3 Topo),Ya (Unfrozen),77.4,74.78,71.23,72.47
