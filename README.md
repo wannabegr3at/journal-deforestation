@@ -74,3 +74,46 @@ journal-deforestation/
 ├── static/             # Frontend HTML/Tailwind CSS testing interface
 ├── app.py              # FastAPI backend & EfficientNet-B2 inference pipeline
 └── requirements.txt    # Python dependencies
+```
+
+### Quick Start (Local Testing)
+
+1. **Clone the repository**
+   ```bash
+   git clone [https://github.com/wannabegr3at/journal-deforestation.git](https://github.com/wannabegr3at/journal-deforestation.git)
+   cd journal-deforestation
+   ```
+
+2. **Install dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Run the FastAPI server**
+   ```bash
+   python -m uvicorn app:app --reload --port 8000
+   ```
+
+4. **Open in browser**
+   Access `http://127.0.0.1:8000`, upload a Landsat 8 RGB composite image, set the auxiliary descriptors, and click **Jalankan Klasifikasi Model**.
+
+## Authors
+
+- **Naufal Aqil Hidayat** — Department of Informatics, Universitas Bina Sarana Informatika
+- **Muhammad Rafli** — Department of Informatics, Universitas Bina Sarana Informatika
+- **Andre Saputra** — Department of Informatics, Universitas Bina Sarana Informatika
+- **Jordy Lasmana Putra** — Department of Informatics, Universitas Bina Sarana Informatika
+- **Zulfati Dinul Fatihah** — Department of Informatics, Universitas Bina Sarana Informatika
+- **Musriatun Napiah** — Department of Informatics, Universitas Bina Sarana Informatika
+
+## Citation
+
+If you use this code or model checkpoint in your research, please cite:
+
+```bibtex
+@article{hidayat2026deforestation,
+  title={The Effect of Contrastive Learning and Topographic Variables on Deforestation Driver Classification in Indonesia Using Landsat 8 Imagery},
+  author={Hidayat, Naufal Aqil and Rafli, Muhammad and Saputra, Andre and Putra, Jordy Lasmana and Fatihah, Zulfati Dinul and Napiah, Musriatun},
+  year={2026}
+}
+```
