@@ -1,0 +1,25 @@
+# Python & cache
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+
+# IDE & OS
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Environment & secrets
+.env
+
+# Dataset mentah & arsip sampel uji lokal
+ForestNetDataset/
+sample_test_web*/
+*.zip
+
+# Checkpoint terlalu besar (>100 MB) atau cadangan eksperimen
+checkpoints/stage1_effnet_supercon.pt
+checkpoints/stage2_effnet_classifier.pt
+checkpoints/best_multimodal_supercon.pt

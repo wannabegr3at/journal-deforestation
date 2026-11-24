@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deforestation Driver Classifier — Landsat 8 Testing</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; background-color: #F4F8FC; color: #1E293B; }
+    .card { background: #FFFFFF; border: 1px solid #DCE8F5; border-radius: 16px; box-shadow: 0 4px 20px rgba(30, 64, 175, 0.04); }
+    .input-field {
+      width: 100%; padding: 0.55rem 0.75rem; border: 1px solid #CBDCEB;
+      border-radius: 10px; background-color: #F9FCFF; font-size: 0.875rem; transition: all 0.2s;
+    }
+    .input-field:focus { outline: none; border-color: #3B82F6; background-color: #FFFFFF; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12); }
+  </style>
+</head>
+<body class="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+
+  <div class="max-w-5xl mx-auto">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+      <div>
+        <span class="inline-block px-3 py-1 text-xs font-semibold text-blue-700 bg-blue-100 rounded-full mb-2">
+          Unfrozen Multimodal SuperCon + 3 Topographic Variables
+        </span>
+        <h1 class="text-2xl font-bold text-slate-800 tracking-tight">
+          Deforestation Driver Classification Tester
+        </h1>
+        <p class="text-sm text-slate-500 mt-1">
+          Pengujian model klasifikasi penyebab deforestasi di Indonesia menggunakan citra Landsat 8 RGB (332×332) dan atribut topografi.
+        </p>
+      </div>
+      <div id="modelBadge" class="self-start sm:self-center px-3.5 py-2 rounded-xl text-xs font-medium bg-sky-50 text-sky-700 border border-sky-200">
+        Memeriksa status model...
+      </div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      
+      <!-- Kolom Kiri: Form Input -->
+      <div class="lg:col-span-7 card p-6">
+        <form id="predictForm" class="space-y-6">
+          
+          <!-- Upload Citra Landsat 8 -->
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-2">
+              1. Citra Satelit Landsat 8 (RGB Composite)
+            </label>
+            <div id="dropZone" class="border-2 border-dashed border-blue-200 hover:border-blue-400 bg-blue-50/40 rounded-xl p-5 text-center cursor-pointer transition">
+              <input type="file" id="imageInput" accept="image/*" class="hidden" required />
+              <div id="uploadPlaceholder" class="py-4">
+                <p class="text-sm font-medium text-blue-700">Klik untuk memilih gambar atau seret file ke sini</p>
+                <p class="text-xs text-slate-400 mt-1">Mendukung PNG, JPG, WEBP (otomatis diubah ke 332×332 px)</p>
+              </div>
+              <div id="previewContainer" class="hidden flex flex-col items-center">
+                <img id="imagePreview" class="w-44 h-44 object-cover rounded-lg border border-blue-200 shadow-sm" alt="Preview Landsat 8" />
+                <span id="fileName" class="text-xs text-slate-500 mt-2"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Preset Topografi Cepat -->
+          <div>
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+              <label class="text-sm font-semibold text-slate-700">
+                2. Variabel Topografi (Mean & Std Dev)
+              </label>
+              <div class="flex flex-wrap gap-1.5">
+                <button type="button" onclick="applyPreset('plantation')" class="px-2.5 py-1 text-xs font-medium bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 rounded-lg transition">
+                  Preset: Dataran Rendah
+                </button>
+                <button type="button" onclick="applyPreset('smallholder')" class="px-2.5 py-1 text-xs font-medium bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 rounded-lg transition">
+                  Preset: Lereng Sedang
+                </button>
+                <button type="button" onclick="applyPreset('shrubland')" class="px-2.5 py-1 text-xs font-medium bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 rounded-lg transition">
+                  Preset: Perbukitan/Semak
+                </button>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+              <!-- Slope (aux_0 & aux_1) -->
+              <div class="p-3.5 rounded-xl bg-slate-50/80 border border-slate-200/80 space-y-2.5">
+                <span class="block text-xs font-semibold text-blue-800 uppercase tracking-wider">Slope (°)</span>
+                <div>
+                  <label class="text-[11px] text-slate-500">Mean</label>
+                  <input type="number" step="any" id="slope_mean" value="44.4277" class="input-field" required />
+                </div>
+                <div>
+                  <label class="text-[11px] text-slate-500">Std Dev</label>
+                  <input type="number" step="any" id="slope_std" value="46.0849" class="input-field" required />
+                </div>
+              </div>
+
+              <!-- Altitude (aux_2 & aux_3) -->
+              <div class="p-3.5 rounded-xl bg-slate-50/80 border border-slate-200/80 space-y-2.5">
+                <span class="block text-xs font-semibold text-blue-800 uppercase tracking-wider">Altitude (m)</span>
+                <div>
+                  <label class="text-[11px] text-slate-500">Mean</label>
+                  <input type="number" step="any" id="altitude_mean" value="2107.9790" class="input-field" required />
+                </div>
+                <div>
+                  <label class="text-[11px] text-slate-500">Std Dev</label>
+                  <input type="number" step="any" id="altitude_std" value="5756.4604" class="input-field" required />
+                </div>
+              </div>
+
+              <!-- Aspect (aux_4 & aux_5) -->
+              <div class="p-3.5 rounded-xl bg-slate-50/80 border border-slate-200/80 space-y-2.5">
+                <span class="block text-xs font-semibold text-blue-800 uppercase tracking-wider">Aspect (°)</span>
+                <div>
+                  <label class="text-[11px] text-slate-500">Mean</label>
+                  <input type="number" step="any" id="aspect_mean" value="0.0" class="input-field" required />
+                </div>
+                <div>
+                  <label class="text-[11px] text-slate-500">Std Dev</label>
+                  <input type="number" step="any" id="aspect_std" value="0.0" class="input-field" required />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" id="submitBtn" class="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm rounded-xl shadow-sm transition flex items-center justify-center gap-2">
+            <span>Jalankan Klasifikasi Model</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Kolom Kanan: Hasil Prediksi -->
+      <div class="lg:col-span-5 card p-6 flex flex-col justify-between">
+        <div>
+          <h2 class="text-sm font-semibold text-slate-700 mb-4">Hasil Analisis & Probabilitas Kelas</h2>
+
+          <div id="emptyState" class="py-16 text-center border border-dashed border-slate-200 rounded-xl bg-slate-50/50">
+            <p class="text-sm text-slate-500">Belum ada pengujian dijalankan.</p>
+            <p class="text-xs text-slate-400 mt-1">Unggah citra Landsat 8 dan tekan tombol klasifikasi.</p>
+          </div>
+
+          <div id="resultContainer" class="hidden space-y-5">
+            <!-- Prediksi Utama -->
+            <div class="p-4 rounded-xl bg-gradient-to-br from-blue-50 to-sky-100/70 border border-blue-200">
+              <span class="text-xs font-medium text-blue-700">Prediksi Penyebab Deforestasi</span>
+              <div class="flex items-baseline justify-between mt-1">
+                <h3 id="predictedClass" class="text-xl font-bold text-slate-900">-</h3>
+                <span id="confidenceScore" class="text-sm font-bold text-blue-700 bg-white px-2.5 py-0.5 rounded-lg border border-blue-200">0%</span>
+              </div>
+            </div>
+
+            <!-- Distribusi Probabilitas 4 Kelas -->
+            <div>
+              <span class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Distribusi Probabilitas</span>
+              <div id="probList" class="space-y-3"></div>
+            </div>
+
+            <!-- Ringkasan Input -->
+            <div class="pt-4 border-t border-slate-100 text-xs text-slate-500 space-y-1">
+              <div class="flex justify-between">
+                <span>Dimensi Input:</span>
+                <span id="metaSize" class="font-medium text-slate-700">-</span>
+              </div>
+              <div class="flex justify-between">
+                <span>Slope / Altitude / Aspect:</span>
+                <span id="metaTopo" class="font-medium text-slate-700">-</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 pt-4 border-t border-slate-100 text-[11px] text-slate-400">
+          Encoder: EfficientNet-B2 (Unfrozen) &bull; Loss: Class-Balanced Focal Loss
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // Cek status checkpoint backend saat halaman dibuka
+    fetch('/api/status')
+      .then(res => res.json())
+      .then(data => {
+        const badge = document.getElementById('modelBadge');
+        if (data.checkpoint_loaded) {
+          badge.textContent = `Model Aktif: best_model.pt (${data.device.toUpperCase()})`;
+          badge.className = "self-start sm:self-center px-3.5 py-2 rounded-xl text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200";
+        } else {
+          badge.textContent = "Mode Demo (Letakkan best_model.pt di folder checkpoints/)";
+          badge.className = "self-start sm:self-center px-3.5 py-2 rounded-xl text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200";
+        }
+      });
+
+    // Interaksi Upload & Drag-and-Drop
+    const dropZone = document.getElementById('dropZone');
+    const imageInput = document.getElementById('imageInput');
+    const previewContainer = document.getElementById('previewContainer');
+    const uploadPlaceholder = document.getElementById('uploadPlaceholder');
+    const imagePreview = document.getElementById('imagePreview');
+    const fileName = document.getElementById('fileName');
+
+    dropZone.addEventListener('click', () => imageInput.click());
+    dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('border-blue-500'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('border-blue-500'));
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('border-blue-500');
+      if (e.dataTransfer.files.length) {
+        imageInput.files = e.dataTransfer.files;
+        showPreview(e.dataTransfer.files[0]);
+      }
+    });
+
+    imageInput.addEventListener('change', (e) => {
+      if (e.target.files.length) showPreview(e.target.files[0]);
+    });
+
+    function showPreview(file) {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        imagePreview.src = ev.target.result;
+        fileName.textContent = file.name;
+        uploadPlaceholder.classList.add('hidden');
+        previewContainer.classList.remove('hidden');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Preset nilai auxiliary sesuai distribusi asli test_loader (aux[0..5])
+    function applyPreset(type) {
+      const presets = {
+        plantation:  { sm: 44.4277, ss: 46.0849, am: 2107.9790, as: 5756.4604, apm: 0.0, aps: 0.0 },
+        smallholder: { sm: 43.5555, ss: 45.5267, am: 2136.7170, as: 5773.2954, apm: 0.0, aps: 0.0 },
+        shrubland:   { sm: 46.6907, ss: 47.4129, am: 2133.2927, as: 5663.7505, apm: 0.0, aps: 0.0 },
+      };
+      const p = presets[type];
+      document.getElementById('slope_mean').value = p.sm;
+      document.getElementById('slope_std').value = p.ss;
+      document.getElementById('altitude_mean').value = p.am;
+      document.getElementById('altitude_std').value = p.as;
+      document.getElementById('aspect_mean').value = p.apm;
+      document.getElementById('aspect_std').value = p.aps;
+    }
+
+    // Submit form ke FastAPI /api/predict
+    document.getElementById('predictForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!imageInput.files.length) {
+        alert("Silakan unggah citra Landsat 8 terlebih dahulu.");
+        return;
+      }
+
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      btn.textContent = "Memproses Inferensi...";
+
+      const formData = new FormData();
+      formData.append('file', imageInput.files[0]);
+      formData.append('slope_mean', document.getElementById('slope_mean').value);
+      formData.append('slope_std', document.getElementById('slope_std').value);
+      formData.append('altitude_mean', document.getElementById('altitude_mean').value);
+      formData.append('altitude_std', document.getElementById('altitude_std').value);
+      formData.append('aspect_mean', document.getElementById('aspect_mean').value);
+      formData.append('aspect_std', document.getElementById('aspect_std').value);
+
+      try {
+        const res = await fetch('/api/predict', { method: 'POST', body: formData });
+        const data = await res.json();
+
+        document.getElementById('emptyState').classList.add('hidden');
+        document.getElementById('resultContainer').classList.remove('hidden');
+
+        document.getElementById('predictedClass').textContent = data.predicted_class;
+        document.getElementById('confidenceScore').textContent = `${data.confidence}%`;
+
+        const probList = document.getElementById('probList');
+        probList.innerHTML = '';
+        data.all_probabilities.forEach((item, idx) => {
+          const barColor = idx === 0 ? 'bg-blue-600' : 'bg-sky-300';
+          probList.innerHTML += `
+            <div>
+              <div class="flex justify-between text-xs mb-1">
+                <span class="${idx === 0 ? 'font-semibold text-slate-800' : 'text-slate-600'}">${item.class_name}</span>
+                <span class="font-medium text-slate-700">${item.probability}%</span>
+              </div>
+              <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                <div class="${barColor} h-2 rounded-full transition-all duration-500" style="width: ${item.probability}%"></div>
+              </div>
+            </div>
+          `;
+        });
+
+        document.getElementById('metaSize').textContent = data.input_summary.image_size;
+        const t = data.input_summary.topography;
+        document.getElementById('metaTopo').textContent = `${t.slope} | ${t.altitude} | ${t.aspect}`;
+      } catch (err) {
+        alert("Gagal memproses prediksi. Pastikan server FastAPI berjalan.");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Jalankan Klasifikasi Model";
+      }
+    });
+  </script>
+</body>
+</html>
